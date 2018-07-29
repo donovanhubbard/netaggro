@@ -7,6 +7,7 @@ class LengthBuffer:
 
     def __init__(self,max_size):
         self.buffer = list()
+        self.max_size = max_size
     #end function
 
 
@@ -15,6 +16,10 @@ class LengthBuffer:
         Adds the object to the buffer's collection. Adding more than the 
         max_size will cause the buffer to flush
         """
+
+        if self.max_size == None or self.max_size < 0:
+            raise AttributeError('Must set max_size to an int greater than or equal to 0')
+
         self.buffer.append(obj)
     #end function
 
