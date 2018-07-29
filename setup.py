@@ -11,6 +11,7 @@ setup(name='netaggro',
         packages=['netaggro'],
         install_requires=[
             'scapy',
+            'pytz',
         ],
         zip_safe=False
         )
