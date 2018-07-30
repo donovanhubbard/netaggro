@@ -41,9 +41,6 @@ class TestLengthBuffer(TestCase):
 
     @patch('netaggro.reducer.Reducer')
     def test_adding_item_forces_flush(self,mock_reducer):
-        #mock_reducer = Mock()
-        #mock_reducer.process = MagicMock()
-
         obj = {'id':'test'}
 
         buff = length_buffer.LengthBuffer(0)
@@ -54,8 +51,32 @@ class TestLengthBuffer(TestCase):
         mock_reducer.process.assert_called_once_with([obj])
     #end function
 
+    @patch('netaggro.reducer.Reducer')
+    def test_adding_multiple_objects_forces_flush(self,mock_reducer):
+        obj1 = {'id':'test'}
+        obj2 = {'id':'test'}
 
+        buff = length_buffer.LengthBuffer(1)
+        buff.register_reducer(mock_reducer)
+        buff.add(obj1)
+        buff.add(obj2)
+        
+        self.assertEqual(len(buff),0)
+        mock_reducer.process.assert_called_once_with([obj1,obj2])
+    #end function
 
+    @patch('netaggro.reducer.Reducer')
+    @patch('netaggro.reducer.Reducer')
+    def test_adding_multiple_reducers_forces_flush(self,mock_reducer1,mock_reducer2):
+        obj = {'id':'test'}
+        buff = length_buffer.LengthBuffer(0)
+        buff.register_reducer(mock_reducer1)
+        buff.register_reducer(mock_reducer2)
+        buff.add(obj)
+
+        mock_reducer1.process.assert_called_once_with([obj])
+        mock_reducer2.process.assert_called_once_with([obj])
+    #end function
     
 
 #end class

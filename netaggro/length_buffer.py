@@ -1,3 +1,5 @@
+import logging
+
 
 class LengthBuffer:
     """
@@ -8,13 +10,15 @@ class LengthBuffer:
     def __init__(self,max_size):
         self.buffer = list()
         self.max_size = max_size
+        self.reducers = list()
+        self.logger = logging.getLogger(__name__)
     #end function
 
     def register_reducer(self,r):
         """
-        
+        Adds a new reducer that will recieve objects.
         """
-        self.reducers = r
+        self.reducers.append(r)
 
     def add(self,obj):
         """
@@ -34,14 +38,20 @@ class LengthBuffer:
         """
         Sends everything in the buffer to the reducer. Clears the buffer.
         """
-        self.reducers.process(self.buffer)
+
+        if self.reducers == None or len(self.reducers) == 0:
+            self.logger.warn('buffer is being flushed, but there are no registered reducers to flush to')
+
+        for r in self.reducers:
+            r.process(self.buffer)
 
         self.buffer=list()
     #end function
 
-
-
     def __len__(self):
+        """
+        Returns how many objects are in the buffer
+        """
         return len(self.buffer)
     #end function
 
